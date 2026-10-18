@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#111114">
+<title>Quick Attend — Attendance Manager</title>
+<style>
+:root{--bg:#f5f6fa;--surface:#fff;--text:#202127;--muted:#777b88;--line:#e8e9ef;--accent:#6965f5;--accent-soft:#eeedff;--green:#17875d;--red:#d64545;--amber:#b7791f;--nav:#303034;--nav-active:#48484d;--shadow:0 8px 28px rgba(24,24,40,.07)}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;min-height:100vh;padding-bottom:112px}body.dark{--bg:#151518;--surface:#222226;--text:#f4f4f6;--muted:#a3a3ad;--line:#37373d;--accent:#918cff;--accent-soft:#33304f;--shadow:0 8px 28px rgba(0,0,0,.2)}
+button,input,select{font:inherit}button{cursor:pointer}.topbar{max-width:1120px;margin:auto;padding:26px 22px 12px;display:flex;align-items:center;justify-content:space-between;gap:16px}.brand{display:flex;align-items:center;gap:12px}.logo{width:43px;height:43px;border-radius:14px;background:var(--accent);display:grid;place-items:center;color:white;font-weight:850;font-size:20px}.brand h1{font-size:21px;margin:0;letter-spacing:-.5px}.brand p{margin:3px 0 0;color:var(--muted);font-size:12px}.greeting{text-align:right;color:var(--muted);font-size:13px}.greeting strong{display:block;color:var(--text);font-size:14px;margin-bottom:3px}
+main{max-width:1120px;margin:auto;padding:16px 22px 26px}.page{display:none}.page.active{display:block;animation:fade .18s ease}@keyframes fade{from{opacity:.5;transform:translateY(3px)}to{opacity:1;transform:none}}.page-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin:8px 0 22px}.page-head h2{font-size:27px;letter-spacing:-.8px;margin:0 0 6px}.page-head p{margin:0;color:var(--muted);font-size:14px}.date-chip{padding:10px 13px;background:var(--surface);border:1px solid var(--line);border-radius:12px;color:var(--muted);font-size:12px;white-space:nowrap}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:22px}.stat,.panel{background:var(--surface);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow)}.stat{padding:18px}.stat-top{display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:13px;gap:8px}.stat-icon{height:34px;width:34px;border-radius:11px;background:var(--accent-soft);display:grid;place-items:center;color:var(--accent);font-size:17px}.stat-number{font-size:30px;font-weight:750;letter-spacing:-1px;margin-top:13px}.stat small{display:block;color:var(--muted);margin-top:4px;font-size:12px}.content-grid{display:grid;grid-template-columns:1.35fr 1fr;gap:16px}.panel{padding:20px;margin-bottom:16px}.panel-title{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:17px}.panel-title h3{margin:0;font-size:16px}.muted{color:var(--muted);font-size:13px}.btn{border:0;border-radius:11px;padding:10px 14px;background:var(--accent);color:#fff;font-weight:650;font-size:13px}.btn.secondary{background:var(--accent-soft);color:var(--accent)}.btn.ghost{background:transparent;border:1px solid var(--line);color:var(--text)}.btn.danger{background:#ffe9e9;color:#a72828}.btn:disabled{opacity:.5;cursor:not-allowed}.actions{display:flex;gap:8px;flex-wrap:wrap}.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}.field{display:flex;flex-direction:column;gap:7px;margin-bottom:13px}.field label{font-size:12px;color:var(--muted);font-weight:650}.field input,.field select{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:11px;background:var(--bg);color:var(--text);outline:none}.field input:focus,.field select:focus{border-color:var(--accent)}.toolbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:16px}.toolbar input,.toolbar select{padding:10px 12px;border:1px solid var(--line);border-radius:11px;background:var(--surface);color:var(--text);min-width:150px}.table-wrap{overflow-x:auto}table{width:100%;border-collapse:collapse;min-width:520px}th,td{text-align:left;padding:13px 10px;border-bottom:1px solid var(--line);font-size:13px}th{color:var(--muted);font-weight:650;font-size:11px;text-transform:uppercase;letter-spacing:.5px}tr:last-child td{border-bottom:0}.person{display:flex;align-items:center;gap:10px}.avatar{height:34px;width:34px;border-radius:11px;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center;font-weight:750}.person strong{display:block;font-size:13px}.person small{color:var(--muted);font-size:11px}.status{display:inline-flex;padding:5px 9px;border-radius:30px;font-size:11px;font-weight:700}.status.Present{background:#e2f7ed;color:#13784e}.status.Absent{background:#ffe8e8;color:#b42323}.status.Late{background:#fff2d5;color:#946200}.status.Half.Day{background:#e7efff;color:#3159a6}.status.Leave{background:#eee8ff;color:#6843b6}.status.Pending{background:#eeeeef;color:#686873}.status-select{max-width:125px;padding:7px;border:1px solid var(--line);border-radius:9px;background:var(--surface);color:var(--text);font-size:12px}.empty{text-align:center;padding:32px 12px;color:var(--muted);font-size:13px}.empty strong{display:block;color:var(--text);margin-bottom:6px}.quick-links{display:grid;grid-template-columns:1fr 1fr;gap:10px}.quick-link{padding:14px;border:1px solid var(--line);border-radius:13px;background:var(--bg);color:var(--text);text-align:left}.quick-link strong{display:block;margin:8px 0 3px;font-size:13px}.quick-link span{font-size:12px;color:var(--muted)}.notice{padding:12px 14px;background:var(--accent-soft);color:var(--accent);border-radius:12px;font-size:13px;margin-bottom:16px}.setting-row{display:flex;justify-content:space-between;align-items:center;gap:15px;padding:16px 0;border-bottom:1px solid var(--line)}.setting-row:last-child{border-bottom:0}.setting-row strong{display:block;font-size:14px}.setting-row p{margin:4px 0 0;color:var(--muted);font-size:12px}.switch{width:46px;height:26px;appearance:none;background:#c8c8d0;border-radius:30px;position:relative;cursor:pointer;flex-shrink:0}.switch:checked{background:var(--accent)}.switch:before{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:white;transition:.2s}.switch:checked:before{left:23px}.bottom-nav{position:fixed;z-index:10;bottom:17px;left:50%;transform:translateX(-50%);width:min(960px,calc(100% - 28px));min-height:82px;padding:8px 10px;background:var(--nav);border:1px solid rgba(255,255,255,.06);border-radius:999px;display:flex;align-items:center;justify-content:space-around;gap:5px;box-shadow:0 12px 38px rgba(0,0,0,.24)}.nav-item{border:0;background:transparent;color:#e9e9ed;flex:1;min-width:0;max-width:150px;height:66px;border-radius:999px;display:flex;align-items:center;justify-content:center;gap:7px;flex-direction:column;padding:7px 5px;transition:background .18s,color .18s}.nav-item svg{width:24px;height:24px;stroke:currentColor;stroke-width:1.9;fill:none;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}.nav-item span{font-size:10px;white-space:nowrap}.nav-item.active{background:var(--nav-active);color:#fff}.nav-item.active svg{stroke-width:2.3}.toast{position:fixed;z-index:20;left:50%;top:18px;transform:translateX(-50%);background:#202127;color:white;padding:12px 18px;border-radius:12px;box-shadow:var(--shadow);font-size:13px;display:none;max-width:calc(100% - 30px)}.toast.show{display:block}.footer-note{text-align:center;color:var(--muted);font-size:11px;padding:10px}
+@media(min-width:760px){.nav-item{flex-direction:row;height:64px;padding:10px 14px}.nav-item span{font-size:12px}.nav-item svg{width:22px;height:22px}}
+@media(max-width:760px){.stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.stat{padding:14px}.stat-number{font-size:26px}.content-grid{grid-template-columns:1fr}.topbar{padding:20px 16px 8px}main{padding:14px 16px 24px}.page-head h2{font-size:24px}.bottom-nav{bottom:10px;min-height:70px;padding:6px 5px;width:calc(100% - 18px);gap:1px}.nav-item{height:57px;gap:5px;padding:5px 1px}.nav-item svg{width:21px;height:21px}.nav-item span{font-size:9px;letter-spacing:-.2px}.greeting{font-size:11px}.greeting strong{font-size:12px}.brand h1{font-size:19px}.brand p{font-size:11px}.date-chip{font-size:11px;padding:9px}.panel{padding:15px}}
+@media(max-width:390px){.nav-item span{font-size:8px}.nav-item svg{width:19px;height:19px}.stats{gap:8px}.stat-top{font-size:12px}.form-row{grid-template-columns:1fr}.page-head{align-items:flex-start}}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="brand"><div class="logo">Q</div><div><h1>Quick Attend</h1><p>Simple attendance management</p></div></div>
+  <div class="greeting"><strong id="greetingText">Good evening!</strong><span id="clockText">--:--</span></div>
+</header>
+<main>
+  <section class="page active" id="page-home">
+    <div class="page-head"><div><h2>Dashboard</h2><p>Here's your attendance overview.</p></div><div class="date-chip" id="todayChip"></div></div>
+    <div class="stats">
+      <div class="stat"><div class="stat-top">Total people <span class="stat-icon">♙</span></div><div class="stat-number" id="totalCount">0</div><small>In your attendance list</small></div>
+      <div class="stat"><div class="stat-top">Present <span class="stat-icon">✓</span></div><div class="stat-number" id="presentCount">0</div><small>Marked present today</small></div>
+      <div class="stat"><div class="stat-top">Absent <span class="stat-icon">×</span></div><div class="stat-number" id="absentCount">0</div><small>Marked absent today</small></div>
+      <div class="stat"><div class="stat-top">Not marked <span class="stat-icon">◷</span></div><div class="stat-number" id="pendingCount">0</div><small>Awaiting attendance</small></div>
+    </div>
+    <div class="content-grid">
+      <div class="panel"><div class="panel-title"><h3>Today's attendance</h3><button class="btn secondary" onclick="navigate('attendance')">Take attendance</button></div><div id="homeAttendance"></div></div>
+      <div class="panel"><div class="panel-title"><h3>Quick actions</h3></div><div class="quick-links">
+        <button class="quick-link" onclick="navigate('attendance')">＋<strong>Mark attendance</strong><span>Update today's status</span></button>
+        <button class="quick-link" onclick="navigate('history')">▤<strong>View history</strong><span>See previous records</span></button>
+        <button class="quick-link" onclick="navigate('reports')">⇩<strong>Export report</strong><span>Download a CSV report</span></button>
+        <button class="quick-link" onclick="navigate('backup')">◫<strong>Data backup</strong><span>Save or restore data</span></button>
+      </div></div>
+    </div>
+  </section>
+
+  <section class="page" id="page-attendance">
+    <div class="page-head"><div><h2>Attendance</h2><p>Add people and record their daily status.</p></div><div class="date-chip" id="attendanceDate"></div></div>
+    <div class="panel">
+      <div class="panel-title"><h3>Add a person</h3><span class="muted">Name is required</span></div>
+      <form id="addPersonForm"><div class="form-row">
+        <div class="field"><label for="personName">Full name</label><input id="personName" placeholder="Enter name" required maxlength="80"></div>
+        <div class="field"><label for="personGroup">Department / class (optional)</label><input id="personGroup" placeholder="e.g. Sales, Class 9" maxlength="80"></div>
+      </div><button class="btn" type="submit">＋ Add person</button></form>
+    </div>
+    <div class="panel"><div class="panel-title"><h3>Mark attendance</h3><span class="muted" id="attendancePeopleCount">0 people</span></div>
+      <div class="toolbar"><input type="search" id="attendanceSearch" placeholder="Search names…"><select id="attendanceFilter"><option value="all">All statuses</option><option>Pending</option><option>Present</option><option>Absent</option><option>Late</option><option>Half Day</option><option>Leave</option></select><button class="btn secondary" onclick="saveToday()">Save today's record</button></div>
+      <div id="attendanceTable" class="table-wrap"></div>
+    </div>
+  </section>
+
+  <section class="page" id="page-history">
+    <div class="page-head"><div><h2>Attendance History</h2><p>Review attendance saved for previous dates.</p></div></div>
+    <div class="panel"><div class="toolbar"><input type="date" id="historyDate"><input type="search" id="historySearch" placeholder="Search name…"><button class="btn secondary" onclick="renderHistory()">Search</button><button class="btn ghost" onclick="document.getElementById('historyDate').value='';renderHistory()">Clear date</button></div><div id="historyTable" class="table-wrap"></div></div>
+  </section>
+
+  <section class="page" id="page-reports">
+    <div class="page-head"><div><h2>Export Reports</h2><p>Download your attendance records for reports.</p></div></div>
+    <div class="panel"><div class="panel-title"><h3>Export attendance to CSV</h3></div><p class="muted">CSV files open in Microsoft Excel, Google Sheets, and other spreadsheet apps.</p>
+      <div class="form-row"><div class="field"><label for="reportFrom">From date</label><input type="date" id="reportFrom"></div><div class="field"><label for="reportTo">To date</label><input type="date" id="reportTo"></div></div>
+      <div class="field"><label for="reportPerson">Person</label><select id="reportPerson"><option value="all">All people</option></select></div>
+      <div class="actions"><button class="btn" onclick="exportCSV()">⇩ Download CSV report</button><button class="btn ghost" onclick="exportTodayCSV()">Download today's report</button></div>
+    </div>
+    <div class="panel"><div class="panel-title"><h3>Report summary</h3></div><div id="reportSummary" class="muted">Your saved records will appear here.</div></div>
+  </section>
+
+  <section class="page" id="page-settings">
+    <div class="page-head"><div><h2>Settings</h2><p>Personalize your Quick Attend app.</p></div></div>
+    <div class="panel"><div class="panel-title"><h3>Appearance</h3></div>
+      <div class="setting-row"><div><strong>Dark mode</strong><p>Use a darker look across the app.</p></div><input class="switch" type="checkbox" id="darkModeSwitch" aria-label="Enable dark mode"></div>
+      <div class="setting-row"><div><strong>App information</strong><p>Quick Attend · Browser-based attendance manager.</p></div><span class="muted">v1.0</span></div>
+    </div>
+    <div class="panel"><div class="panel-title"><h3>Manage people</h3></div><p class="muted">Removing a person also removes their saved attendance records. Export a backup first if you need to keep them.</p><button class="btn danger" onclick="clearPeople()">Remove all people and attendance</button></div>
+  </section>
+
+  <section class="page" id="page-backup">
+    <div class="page-head"><div><h2>Data Backup</h2><p>Keep a copy of your attendance data and restore it later.</p></div></div>
+    <div class="notice">Your data is saved in this browser on this device. Clearing browser storage or switching devices may remove or hide it. Make backups regularly.</div>
+    <div class="panel"><div class="panel-title"><h3>Back up your data</h3></div><p class="muted">Download your people list and attendance history as a JSON backup file.</p><button class="btn" onclick="downloadBackup()">⇩ Download backup</button></div>
+    <div class="panel"><div class="panel-title"><h3>Restore a backup</h3></div><p class="muted">Choose a Quick Attend JSON backup file. Restoring replaces the current people list and attendance records.</p><div class="field"><label for="backupFile">Choose backup file</label><input type="file" id="backupFile" accept=".json,application/json"></div><button class="btn secondary" onclick="restoreBackup()">Restore backup</button></div>
+    <div class="panel"><div class="panel-title"><h3>Current data</h3></div><div id="backupSummary" class="muted"></div></div>
+  </section>
+  <div class="footer-note">Quick Attend · Your data stays in this browser unless you export it.</div>
+</main>
+
+<nav class="bottom-nav" aria-label="Main navigation">
+  <button class="nav-item active" data-page="home" aria-label="Home" title="Home">
+    <svg viewBox="0 0 24 24"><path d="m3 10 9-7 9 7"/><path d="M5 9v11h14V9M9 20v-7h6v7"/></svg><span>Home</span>
+  </button>
+  <button class="nav-item" data-page="attendance" aria-label="Attendance" title="Attendance">
+    <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M16 2v4M8 2v4M3 9h18M8 14l2 2 5-5"/></svg><span>Attendance</span>
+  </button>
+  <button class="nav-item" data-page="history" aria-label="Attendance History" title="Attendance History">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2M3 4v5h5"/></svg><span>History</span>
+  </button>
+  <button class="nav-item" data-page="reports" aria-label="Export Reports" title="Export Reports">
+    <svg viewBox="0 0 24 24"><path d="M12 3v12m-5-5 5 5 5-5"/><path d="M5 16v4h14v-4"/></svg><span>Reports</span>
+  </button>
+  <button class="nav-item" data-page="settings" aria-label="Settings" title="Settings">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="m19.4 15 .1.1 1.4 1.1-1.4 2.4-1.7-.6a8 8 0 0 1-1.7 1l-.3 1.8h-2.8l-.3-1.8a8 8 0 0 1-1.7-1l-1.7.6-1.4-2.4L7.3 15a8 8 0 0 1 0-2l-1.4-1.1 1.4-2.4 1.7.6a8 8 0 0 1 1.7-1l.3-1.8h2.8l.3 1.8a8 8 0 0 1 1.7 1l1.7-.6 1.4 2.4-1.4 1.1a8 8 0 0 1-.1 2Z"/></svg><span>Settings</span>
+  </button>
+  <button class="nav-item" data-page="backup" aria-label="Data Backup" title="Data Backup">
+    <svg viewBox="0 0 24 24"><path d="M12 3v12m-5-5 5 5 5-5"/><path d="M4 17v3h16v-3M4 4h5"/></svg><span>Backup</span>
+  </button>
+</nav>
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+<script>
+const STATUSES=['Pending','Present','Absent','Late','Half Day','Leave'];
+const today=()=>new Date().toLocaleDateString('en-CA');
+const load=(key,fallback)=>{try{return JSON.parse(localStorage.getItem(key))??fallback}catch{return fallback}};
+let people=load('qa_people',[]);
+let records=load('qa_records',{});
+const save=()=>{localStorage.setItem('qa_people',JSON.stringify(people));localStorage.setItem('qa_records',JSON.stringify(records));renderAll()};
+const escapeHTML=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const niceDate=d=>d?new Date(d+'T12:00:00').toLocaleDateString(undefined,{day:'numeric',month:'short',year:'numeric'}):'';
+function toast(msg){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');clearTimeout(toast.timer);toast.timer=setTimeout(()=>el.classList.remove('show'),2600)}
+function navigate(page){document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active',p.id==='page-'+page));document.querySelectorAll('.nav-item').forEach(b=>b.classList.toggle('active',b.dataset.page===page));if(page==='history')renderHistory();if(page==='reports')renderReports();if(page==='backup')renderBackupSummary();window.scrollTo({top:0,behavior:'smooth'})}
+document.querySelectorAll('.nav-item').forEach(b=>b.addEventListener('click',()=>navigate(b.dataset.page)));
+function statusFor(id,date=today()){return records[date]?.[id]||'Pending'}
+function statusClass(s){return s.replace(/\s/g,'.')}
+function statusOptions(selected){return STATUSES.map(s=>`<option ${s===selected?'selected':''}>${s}</option>`).join('')}
+function personCell(p){return `<div class="person"><div class="avatar">${escapeHTML(p.name.trim().charAt(0).toUpperCase())}</div><div><strong>${escapeHTML(p.name)}</strong><small>${escapeHTML(p.group||'No department/class')}</small></div></div>`}
+function tableRows(list,date,editable=false){if(!list.length)return '<div class="empty"><strong>No people found</strong>Add a person to start recording attendance.</div>';return `<table><thead><tr><th>Person</th><th>Status</th>${editable?'<th>Action</th>':'<th>Date</th>'}</tr></thead><tbody>${list.map(p=>{const s=statusFor(p.id,date);return `<tr><td>${personCell(p)}</td><td>${editable?`<select class="status-select" aria-label="Status for ${escapeHTML(p.name)}" onchange="setStatus('${p.id}',this.value)">${statusOptions(s)}</select>`:`<span class="status ${statusClass(s)}">${escapeHTML(s)}</span>`}</td><td>${editable?`<button class="btn ghost" style="padding:7px 9px" onclick="removePerson('${p.id}')">Remove</button>`:escapeHTML(niceDate(date))}</td></tr>`}).join('')}</tbody></table>`}
+function renderHome(){const date=today(),counts=Object.fromEntries(STATUSES.map(s=>[s,0]));people.forEach(p=>counts[statusFor(p.id,date)]++);document.getElementById('totalCount').textContent=people.length;document.getElementById('presentCount').textContent=counts.Present;document.getElementById('absentCount').textContent=counts.Absent;document.getElementById('pendingCount').textContent=counts.Pending;document.getElementById('homeAttendance').innerHTML=people.length?`<div class="table-wrap">${tableRows(people.slice(0,5),date,false)}</div>${people.length>5?`<p class="muted">Showing 5 of ${people.length} people.</p>`:''}`:'<div class="empty"><strong>Welcome to Quick Attend!</strong>Add people in Attendance to get started.</div>'}
+function renderAttendance(){const q=document.getElementById('attendanceSearch').value.toLowerCase(),f=document.getElementById('attendanceFilter').value;let list=people.filter(p=>p.name.toLowerCase().includes(q)||String(p.group||'').toLowerCase().includes(q)).filter(p=>f==='all'||statusFor(p.id)===f);document.getElementById('attendancePeopleCount').textContent=`${people.length} ${people.length===1?'person':'people'}`;document.getElementById('attendanceTable').innerHTML=tableRows(list,today(),true)}
+function renderHistory(){const date=document.getElementById('historyDate').value,q=document.getElementById('historySearch').value.toLowerCase();let dates=Object.keys(records).filter(d=>!date||d===date).sort((a,b)=>b.localeCompare(a));let entries=[];dates.forEach(d=>people.filter(p=>p.name.toLowerCase().includes(q)&&records[d]?.[p.id]).forEach(p=>entries.push({p,date:d,status:records[d][p.id]})));const root=document.getElementById('historyTable');if(!entries.length){root.innerHTML='<div class="empty"><strong>No saved history yet</strong>Mark attendance and save the record to see it here.</div>';return}root.innerHTML=`<table><thead><tr><th>Person</th><th>Status</th><th>Date</th></tr></thead><tbody>${entries.map(e=>`<tr><td>${personCell(e.p)}</td><td><span class="status ${statusClass(e.status)}">${escapeHTML(e.status)}</span></td><td>${escapeHTML(niceDate(e.date))}</td></tr>`).join('')}</tbody></table>`}
+function renderReports(){const sel=document.getElementById('reportPerson'),old=sel.value;sel.innerHTML='<option value="all">All people</option>'+people.map(p=>`<option value="${p.id}">${escapeHTML(p.name)}</option>`).join('');if([...sel.options].some(o=>o.value===old))sel.value=old;let total=0;Object.values(records).forEach(day=>Object.values(day).forEach(()=>total++));document.getElementById('reportSummary').textContent=`${people.length} people · ${Object.keys(records).length} dates with saved records · ${total} attendance entries.`}
+function renderBackupSummary(){let n=Object.values(records).reduce((sum,d)=>sum+Object.keys(d).length,0);document.getElementById('backupSummary').textContent=`${people.length} people · ${Object.keys(records).length} dates with saved records · ${n} attendance entries.`}
+function renderAll(){renderHome();renderAttendance();renderHistory();renderReports();renderBackupSummary()}
+function setStatus(id,status){if(!records[today()])records[today()]={};records[today()][id]=status;localStorage.setItem('qa_records',JSON.stringify(records));renderHome();renderAttendance();renderReports();renderBackupSummary()}
+document.getElementById('addPersonForm').addEventListener('submit',e=>{e.preventDefault();const name=document.getElementById('personName').value.trim();if(!name)return;people.push({id:crypto.randomUUID?crypto.randomUUID():String(Date.now()+Math.random()),name,group:document.getElementById('personGroup').value.trim()});document.getElementById('personName').value='';document.getElementById('personGroup').value='';save();toast('Person added successfully')});
+function saveToday(){if(!records[today()])records[today()]={};people.forEach(p=>{if(!records[today()][p.id])records[today()][p.id]='Pending'});localStorage.setItem('qa_records',JSON.stringify(records));renderAll();toast("Today's attendance record saved")}
+function removePerson(id){const p=people.find(x=>x.id===id);if(!p||!confirm(`Remove ${p.name} and their attendance records?`))return;people=people.filter(x=>x.id!==id);Object.keys(records).forEach(d=>delete records[d][id]);save();toast('Person removed')}
+function clearPeople(){if(!confirm('This will permanently remove all people and attendance records from this browser. Continue?'))return;people=[];records={};save();toast('All attendance data removed')}
+document.getElementById('attendanceSearch').addEventListener('input',renderAttendance);document.getElementById('attendanceFilter').addEventListener('change',renderAttendance);document.getElementById('historyDate').addEventListener('change',renderHistory);document.getElementById('historySearch').addEventListener('input',renderHistory);
+function downloadFile(content,type,name){const blob=new Blob([content],{type}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url)}
+function csvCell(v){return '"'+String(v??'').replace(/"/g,'""')+'"'}
+function exportCSVRange(from,to,personId){const rows=[['Date','Name','Department / Class','Status']];Object.keys(records).sort().forEach(d=>{if(from&&d<from||to&&d>to)return;people.filter(p=>(!personId||personId==='all'||p.id===personId)&&records[d]?.[p.id]).forEach(p=>rows.push([d,p.name,p.group||'',records[d][p.id]]))});if(rows.length===1){toast('No saved records match these filters');return}downloadFile('\ufeff'+rows.map(r=>r.map(csvCell).join(',')).join('\r\n'),'text/csv;charset=utf-8',`quick-attend-report-${today()}.csv`);toast('CSV report downloaded')}
+function exportTodayCSV(){exportCSVRange(today(),today(),'all')}
+function exportCSV(){const from=document.getElementById('reportFrom').value,to=document.getElementById('reportTo').value,p=document.getElementById('reportPerson').value;if(from&&to&&from>to){toast('From date must be before To date');return}exportCSVFiltered(from,to,p)}
+function exportCSVFiltered(from,to,p){const rows=[['Date','Name','Department / Class','Status']];Object.keys(records).sort().forEach(d=>{if((from&&d<from)||(to&&d>to))return;people.filter(person=>(p==='all'||person.id===p)&&records[d]?.[person.id]).forEach(person=>rows.push([d,person.name,person.group||'',records[d][person.id]]))});if(rows.length===1){toast('No saved records match these filters');return}downloadFile('\ufeff'+rows.map(r=>r.map(csvCell).join(',')).join('\r\n'),'text/csv;charset=utf-8',`quick-attend-report-${today()}.csv`);toast('CSV report downloaded')}
+function downloadBackup(){downloadFile(JSON.stringify({app:'Quick Attend',version:1,exportedAt:new Date().toISOString(),people,records},null,2),'application/json',`quick-attend-backup-${today()}.json`);toast('Backup downloaded')}
+function restoreBackup(){const file=document.getElementById('backupFile').files[0];if(!file){toast('Please choose a backup file first');return}const reader=new FileReader();reader.onload=()=>{try{const data=JSON.parse(reader.result);if(!Array.isArray(data.people)||!data.records||typeof data.records!=='object')throw new Error('Invalid backup');if(!confirm('Restoring replaces your current data. Continue?'))return;people=data.people;records=data.records;save();toast('Backup restored successfully')}catch{toast('Could not restore this file. Please select a valid Quick Attend backup.')}};reader.readAsText(file)}
+document.getElementById('darkModeSwitch').addEventListener('change',e=>{document.body.classList.toggle('dark',e.target.checked);localStorage.setItem('qa_dark',e.target.checked?'1':'0')});
+function updateClock(){const now=new Date(),h=now.getHours();document.getElementById('greetingText').textContent=h<12?'Good morning!':h<17?'Good afternoon!':'Good evening!';document.getElementById('clockText').textContent=now.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});document.getElementById('todayChip').textContent=now.toLocaleDateString(undefined,{weekday:'short',day:'numeric',month:'short',year:'numeric'});document.getElementById('attendanceDate').textContent=niceDate(today())}
+const dark=localStorage.getItem('qa_dark')==='1';document.body.classList.toggle('dark',dark);document.getElementById('darkModeSwitch').checked=dark;
+updateClock();setInterval(updateClock,30000);renderAll();
+</script>
+</body>
+</html>
